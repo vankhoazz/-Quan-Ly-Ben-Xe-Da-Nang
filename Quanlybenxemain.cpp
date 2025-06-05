@@ -3,9 +3,7 @@
 #include <sstream>
 #include <fstream>
 #include<iomanip>
-#include<ctime>
 #include<cstring>
-#include<algorithm>
 #include <cstdlib>
 #include <limits> 
 #include <chrono>
@@ -14,12 +12,11 @@ using namespace std;
 
 class Xe {
 private:
-        string bienso,mauxe,tentaixe,tuyenduong;
-        long long sdttx;
+        string bienso,mauxe,tentaixe,tuyenduong,sdttx;
         int chongoi,namsx; 
 public:
         Xe() {};
-        Xe(string bienso,string mauxe,int chongoi,int namsx,string tentaixe,long long sdttx,string tuyenduong)
+        Xe(string bienso,string mauxe,int chongoi,int namsx,string tentaixe,string sdttx,string tuyenduong)
         {
                 this->bienso = bienso;
                 this->mauxe = mauxe;
@@ -42,16 +39,22 @@ public:
                 cin.ignore();
                 getline(cin,tentaixe);
                 cout<<"Nhap so dien thoai tai xe: ";
-                cin>>sdttx;
+                getline(cin,sdttx);
                 cout<<"Nhap tuyen duong (A-B): ";
-                cin.ignore();
                 getline(cin,tuyenduong);
         }
         virtual void xuatthongtinxe() {
-                cout<<"\n+--------------------------------------------------------------------------------------+\n";
-                cout<<left<<setw(18)<<loaixe()<<setw(10)<<bienso<<setw(10)<<mauxe<<setw(10)<<chongoi<<setw(10)<<namsx<<setw(20)<<tentaixe<<setw(10)<<sdttx<<setw(10)<<tuyenduong;
+                cout << "| " << setw(11) << left << loaixe()
+                << "| " << setw(8)  << bienso
+                << "| " << setw(12) << mauxe
+                << "| " << setw(9)  << chongoi
+                << "| " << setw(8)  << namsx
+                << "| " << setw(12) << tentaixe
+                << "| " << setw(14) << sdttx
+                << "| " << setw(12) << tuyenduong;
         }
         virtual string loaixe() = 0;
+        virtual long long getPhiRaVao() const = 0;
         virtual void ghifilexe(ofstream& of) {
                 of<<bienso<<"|"<<mauxe<<"|"<<chongoi<<"|"<<namsx<<"|"<<tentaixe<<"|"<<sdttx<<"|"<<tuyenduong;
         }
@@ -60,10 +63,10 @@ public:
         int hthichongoi() const { return chongoi; }
         int hthinamsx() const { return namsx; }
         string hthitentaixe() const { return tentaixe; }
-        long long hthisdttx() const { return sdttx; }
+        string hthisdttx() const { return sdttx; }
         string hthituyenduong() const { return tuyenduong; }
         void suatentx(string tentaixemoi) { tentaixe = tentaixemoi; }
-        void suasdttx(long long sdttxmoi) { sdttx = sdttxmoi; }
+        void suasdttx(string sdttxmoi) { sdttx = sdttxmoi; }
         void suatuyenduong(string tuyenduongmoi) { tuyenduong = tuyenduongmoi; }
 };
 class Xekhach : public Xe {
@@ -71,7 +74,7 @@ private:
         long long phidvravaoxkh;
 public:
         Xekhach() {}
-        Xekhach(string bienso,string mauxe,int chongoi,int namsx,string tentaixe,long long sdttx,string tuyenduong,long long phidvravaoxkh)
+        Xekhach(string bienso,string mauxe,int chongoi,int namsx,string tentaixe,string sdttx,string tuyenduong,long long phidvravaoxkh)
          : Xe(bienso,mauxe,chongoi,namsx,tentaixe,sdttx,tuyenduong) {
                 this->phidvravaoxkh = phidvravaoxkh;
         }
@@ -82,8 +85,7 @@ public:
         }
         void xuatthongtinxe() {
                 Xe::xuatthongtinxe();
-                cout<<phidvravaoxkh<<"VND"<<"\n";
-                cout<<"+--------------------------------------------------------------------------------------+\n";
+                cout<<"|   "<<phidvravaoxkh<<"VND"<<"    |"<<"\n";
         }
         string loaixe() override {
                 return "Xe Khach";
@@ -93,7 +95,7 @@ public:
                 Xe::ghifilexe(of);
                 of<<"|"<<phidvravaoxkh<<"\n";
         }
-        long long phiravaoxk() const { return phidvravaoxkh; }
+        long long getPhiRaVao() const { return phidvravaoxkh; }
 };
 
 class Limousine : public Xe {
@@ -101,7 +103,7 @@ private:
         long long phidvravaolimo;
 public:
         Limousine() {}
-        Limousine(string bienso,string mauxe,int chongoi,int namsx,string tentaixe,long long sdttx,string tuyenduong,long long phidvravaolimo)
+        Limousine(string bienso,string mauxe,int chongoi,int namsx,string tentaixe,string sdttx,string tuyenduong,long long phidvravaolimo)
          : Xe(bienso,mauxe,chongoi,namsx,tentaixe,sdttx,tuyenduong) {
                 this->phidvravaolimo = phidvravaolimo;
         }
@@ -112,8 +114,7 @@ public:
         }
         void xuatthongtinxe() {
                 Xe::xuatthongtinxe();
-                cout<<phidvravaolimo<<"VND"<<"\n";
-                cout<<"+--------------------------------------------------------------------------------------+\n";
+                cout<<"|   "<<phidvravaolimo<<"VND"<<"    |"<<"\n";
         }
         string loaixe() override {
                 return "Limousine";
@@ -123,7 +124,7 @@ public:
                 Xe::ghifilexe(of);
                 of<<"|"<<phidvravaolimo<<"\n";
         }
-        long long phiravaolimo() const { return phidvravaolimo; }
+        long long getPhiRaVao() const { return phidvravaolimo; }
 };
 void themvaodsachxe(vector<Xe*>& v1) {
         int luachon;
@@ -141,15 +142,27 @@ void themvaodsachxe(vector<Xe*>& v1) {
         cout<<" =>Them xe thanh cong!"; 
         cout<<endl;
         system("pause");
+        system("cls");
 }
 void xuatdsachxe(const vector<Xe*>& v1) {
-        cout<<"\n+-------------------------------------------------------------------------------------+\n";
+        cout<<"+----------------------------------------------------------------------------------------------------------------------+\n";
+        cout<< "| " << setw(11) << left << "Loai xe"
+        << "| " << setw(8)  << "Bien so"
+        << "| " << setw(12) << "  Mau xe"
+        << "| " << setw(8)  << "Cho ngoi "
+        << "| " << setw(8)  << "Nam sx"
+        << "| " << setw(12) << "Ten tai xe"
+        << "| " << setw(12) << "So dien thoai "
+        << "| " << setw(12) << "Tuyen duong"
+        << "| " << setw(12) << "  Phi dvu"<<"   |";
+        cout<<"\n+----------------------------------------------------------------------------------------------------------------------+\n";
         for(Xe* xe : v1) {
                 xe->xuatthongtinxe();
         }
-        cout<<"+-------------------------------------------------------------------------------------+\n";
-        cout<<endl;
+        cout<<"+----------------------------------------------------------------------------------------------------------------------+\n";
         system("pause");
+        system("cls");
+
 }
 void luufiledsachxe(const vector<Xe*>& v1) {
         ofstream of1("QuanLyXe.txt", ios::trunc);
@@ -184,14 +197,13 @@ void docfiledsachxe(vector<Xe*>& v1) {
                 getline(ss,phidvxef,'|');
                 int sochof1 = stoi(sochof);
                 int namsxf1 = stoi(namsxf);
-                long long sdttxf1 = stoll(sdttxf);
                 long long phidvxef1 = stoll(phidvxef);
                 if(loaixef == "Xe Khach") {
-                        Xekhach* xk = new Xekhach(biensof,mauxef,sochof1,namsxf1,tentaixef,sdttxf1,tuyenduongf,phidvxef1);
+                        Xekhach* xk = new Xekhach(biensof,mauxef,sochof1,namsxf1,tentaixef,sdttxf,tuyenduongf,phidvxef1);
                         v1.push_back(xk);
                 }
                 else if(loaixef == "Limousine") {
-                        Limousine* limo = new Limousine(biensof,mauxef,sochof1,namsxf1,tentaixef,sdttxf1,tuyenduongf,phidvxef1);
+                        Limousine* limo = new Limousine(biensof,mauxef,sochof1,namsxf1,tentaixef,sdttxf,tuyenduongf,phidvxef1);
                         v1.push_back(limo);
                 }
         }
@@ -221,7 +233,7 @@ void xoaTtxe(vector<Xe*>& v1) {
                                         }       
                                 }
                                 if(!ktraxoaxe) {
-                                        cout<<"Khong tim thay xe co bien so "<<biensoxoa;
+                                        cout<<"Khong tim thay xe co bien so "<<biensoxoa<<"\n";
                                 }
                                 else {
                                         v1 = v1m;
@@ -243,7 +255,7 @@ void xoaTtxe(vector<Xe*>& v1) {
                                         }       
                                 }
                                 if(!ktraxoaxe) {
-                                        cout<<"Khong tim thay tai xe co ten "<<tentxxoa;
+                                        cout<<"Khong tim thay tai xe co ten "<<tentxxoa<<"\n";
                                 }
                                 else {
                                         v1 = v1m;
@@ -253,8 +265,11 @@ void xoaTtxe(vector<Xe*>& v1) {
                         }
                         case 3: {
                                 xoaxe = false;
+                                system("cls");
                                 break;  
-                        }   
+                        }
+                        default : 
+                                cout<<"Lua chon khong hop le vui long nhap lai\n";  
                 }
         }
 }
@@ -272,13 +287,25 @@ void timkiemTtxe(const vector<Xe*>& v1) {
                                 cout<<"Nhap bien so can tim kiem: ";
                                 cin.ignore();
                                 getline(cin,biensoTk);
+                                cout<<"Tim thay thong tin xe co bien so "<<biensoTk<<" co thong tin nhu sau: "<<"\n";
+                                cout<<"+----------------------------------------------------------------------------------------------------------------------+\n";
+                                cout<< "| " << setw(11) << left << "Loai xe"
+                                << "| " << setw(8)  << "Bien so"
+                                << "| " << setw(12) << "  Mau xe"
+                                << "| " << setw(8)  << "Cho ngoi "
+                                << "| " << setw(8)  << "Nam sx"
+                                << "| " << setw(12) << "Ten tai xe"
+                                << "| " << setw(12) << "So dien thoai "
+                                << "| " << setw(12) << "Tuyen duong"
+                                << "| " << setw(12) << "  Phi dvu"<<"   |";
+                                cout<<"\n+----------------------------------------------------------------------------------------------------------------------+\n";
                                 for(Xe* xe : v1) {
                                         if(xe->hthibienso() == biensoTk) {
-                                                cout<<"Tim thay thong tin xe co bien so "<<biensoTk<<"\n";
                                                 xe->xuatthongtinxe();
                                                 ktratimkiemxe = true;
                                         }
                                 }
+                                cout<<"+----------------------------------------------------------------------------------------------------------------------+\n";
                                 if(!ktratimkiemxe) {
                                         cout<<"Khong tim thay thong tin cua xe co bien so "<<biensoTk;
                                 }
@@ -289,13 +316,25 @@ void timkiemTtxe(const vector<Xe*>& v1) {
                                 cout<<"Nhap tuyen xe tim kiem: ";
                                 cin.ignore();
                                 getline(cin,tuyenxeTk);
+                                cout<<"\nTim thay tuyen xe "<<tuyenxeTk<<" co thong tin nhu sau: "<<"\n";
+                                cout<<"+----------------------------------------------------------------------------------------------------------------------+\n";
+                                cout<< "| " << setw(11) << left << "Loai xe"
+                                << "| " << setw(8)  << "Bien so"
+                                << "| " << setw(12) << "  Mau xe"
+                                << "| " << setw(8)  << "Cho ngoi "
+                                << "| " << setw(8)  << "Nam sx"
+                                << "| " << setw(12) << "Ten tai xe"
+                                << "| " << setw(12) << "So dien thoai "
+                                << "| " << setw(12) << "Tuyen duong"
+                                << "| " << setw(12) << "  Phi dvu"<<"   |";
+                                cout<<"\n+----------------------------------------------------------------------------------------------------------------------+\n";
                                 for (Xe* xe : v1) {
-                                        cout<<"Tim thay tuyen xe "<<tuyenxeTk<<"\n";
                                         if(xe->hthituyenduong() == tuyenxeTk) {
                                                 xe->xuatthongtinxe();
                                                 ktratimkiemxe = true;
                                         }
                                 }
+                                cout<<"+----------------------------------------------------------------------------------------------------------------------+\n";
                                 if(!ktratimkiemxe) {
                                         cout<<"Khong tim thay thong tin cua xe co tuyen "<<tuyenxeTk;
                                 }
@@ -306,13 +345,25 @@ void timkiemTtxe(const vector<Xe*>& v1) {
                                 cout<<"Nhap ten tai xe cua xe can tim kiem : ";
                                 cin.ignore();
                                 getline(cin,tentxeTk);
+                                cout<<"Tim thay ten tai xe "<<tentxeTk<<" co thong tin nhu sau: "<<"\n";
+                                cout<<"+----------------------------------------------------------------------------------------------------------------------+\n";
+                                cout<< "| " << setw(11) << left << "Loai xe"
+                                << "| " << setw(8)  << "Bien so"
+                                << "| " << setw(12) << "  Mau xe"
+                                << "| " << setw(8)  << "Cho ngoi "
+                                << "| " << setw(8)  << "Nam sx"
+                                << "| " << setw(12) << "Ten tai xe"
+                                << "| " << setw(12) << "So dien thoai "
+                                << "| " << setw(12) << "Tuyen duong"
+                                << "| " << setw(12) << "  Phi dvu"<<"   |";
+                                cout<<"\n+----------------------------------------------------------------------------------------------------------------------+\n";
                                 for (Xe* xe : v1) {
                                         if(xe->hthitentaixe() == tentxeTk) {
-                                                cout<<"Tim thay ten tai xe "<<tentxeTk<<"\n";
                                                 xe->xuatthongtinxe();
                                                 ktratimkiemxe = true;
                                         }
                                 }
+                                cout<<"+----------------------------------------------------------------------------------------------------------------------+\n";
                                 if(!ktratimkiemxe) {
                                         cout<<"Khong tim thay thong tin cua xe co ten tai xe "<<tentxeTk;
                                 }
@@ -320,7 +371,7 @@ void timkiemTtxe(const vector<Xe*>& v1) {
                         }
                         case 4: {
                                 timkiemXe = false;
-                                cout<<endl;
+                                system("cls");
                                 break;      
                         }
                 }
@@ -328,6 +379,7 @@ void timkiemTtxe(const vector<Xe*>& v1) {
 }
 void chinhsuaTtxe(vector<Xe*>& v1) {
         cout<<"Nhap bien so xe can chinh sua: ";
+        cin.ignore();
         string biensoxeCS;
         getline(cin,biensoxeCS);
         bool suaxe = false;
@@ -357,12 +409,14 @@ void chinhsuaTtxe(vector<Xe*>& v1) {
                                                         this_thread::sleep_for(chrono::milliseconds(150));
                                                 }
                                                 cout<<"\nDa sua va cap nhat thanh cong thong tin.";
+                                                system("cls");
                                                 break;
                                         }
                                         case 2: {
-                                                long long sdttxsua;
+                                                string sdttxsua;
                                                 cout<<"Nhap so dien thoai cua tai xe can thay doi thanh: ";
-                                                cin>>sdttxsua;
+                                                cin.ignore();
+                                                getline(cin,sdttxsua);
                                                 xe->suasdttx(sdttxsua);
                                                 ktrasuaxe = false;
                                                 cout << "Dang luu lai thong tin ";
@@ -372,6 +426,7 @@ void chinhsuaTtxe(vector<Xe*>& v1) {
                                                         this_thread::sleep_for(chrono::milliseconds(150));
                                                 }
                                                 cout<<"\nDa sua va cap nhat thanh cong thong tin.";
+                                                system("cls");
                                                 break;
                                         }
                                         case 3: {
@@ -388,6 +443,7 @@ void chinhsuaTtxe(vector<Xe*>& v1) {
                                                         this_thread::sleep_for(chrono::milliseconds(150));
                                                 }
                                                 cout<<"\nDa sua va cap nhat thanh cong thong tin.\n";
+                                                system("cls");
                                                 break;
                                         }
                                         case 4: {
@@ -405,12 +461,13 @@ void chinhsuaTtxe(vector<Xe*>& v1) {
 class Khachhang
 {
 private:
-        string hotenKH,diaChiKH,tuyenduong,loaixee,thoigiandatve,trangthai;
-        long long sdtKH,tongthanhtoan;
+        string hotenKH,diaChiKH,tuyenduong,loaixee,thoigiandatve,trangthai,sdtKH;
+        long long tongthanhtoan;
         int soluongve;
+        static int STT;
 public:
         Khachhang() {}
-        Khachhang(string hotenKH,string diaChiKH,long long sdtKH,string tuyenduong,string loaixee,int soluongve,long long tongthanhtoan,string thoigiandatve,string trangthai) {
+        Khachhang(string hotenKH,string diaChiKH,string sdtKH,string tuyenduong,string loaixee,int soluongve,long long tongthanhtoan,string thoigiandatve,string trangthai) {
                 this->hotenKH = hotenKH;
                 this->diaChiKH = diaChiKH;
                 this->sdtKH = sdtKH;
@@ -428,7 +485,7 @@ public:
                 cout<<"Nhap dia chi khach hang: ";
                 getline(cin,diaChiKH);
                 cout<<"Nhap so dien thoai cua khach hang: ";
-                cin>>sdtKH;              
+                getline(cin,sdtKH);              
         }
         void xuatthongtinKH() {
                 cout<<"\n+----------------------------IN VE XE-------------------------------------+\n";
@@ -444,6 +501,7 @@ public:
                 cout<<"+-------------------------------------------------------------------------+\n";
                 cout<<" =>Xuat ve thanh cong.\n";
                 system("pause");
+                system("cls");
         }
         void ghifileKH(ofstream& of) {
                 of<<hotenKH<<"|"<<diaChiKH<<"|"<<sdtKH<<"|"<<tuyenduong<<"|"<<loaixee<<"|"<<soluongve<<"|"<<tongthanhtoan<<"|"<<thoigiandatve<<"|"<<trangthai<<"\n";
@@ -454,7 +512,12 @@ public:
         strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&now));
         thoigiandatve = buffer;
         }
+        static int demstt() {
+                STT++;
+                return STT; 
+        }
         string xuathotenKH() { return hotenKH; }
+        string xuattrangthai() { return trangthai; }
         long long tongthanhtoanve() { return tongthanhtoan; }      
         void settrangthai(string trangthaimoi) { trangthai = trangthaimoi; }
         void setoluongve(int soluongvemoi) { soluongve = soluongvemoi; }
@@ -462,25 +525,29 @@ public:
         void setLoaixee(string loaixxemoi) { loaixee = loaixxemoi; }
         void settongthanhtoan(long long tongthanhtoanmoi) { tongthanhtoan = tongthanhtoanmoi; }           
 };
+int Khachhang::STT = 0;
+
 void themthongtinKHdVe(vector<Xe*>& v1,vector<Khachhang>& v2) {
         Khachhang kh;
         kh.themthongtinKH();
         cout<<setw(36)<<"Tim thay cac tuyen duong sau"<<"\n";
-        static int STT = 1;
-        for(Xe* xe : v1) {
-                cout << STT;
-                cout<<setw(20)<<xe->hthituyenduong()<<setw(20)<<xe->loaixe();
+        cout<<"|"<<"STT"
+            <<"| "<< setw(10) <<"  Tuyen duong  "
+            <<"| "<< setw(10) <<"  Loai phuong tien  "<<"|"<<"\n";
+        cout<<"+------------------------------------------+";
+        cout<<endl;
+        for(Xe* xe : v1) { 
+                cout << "| " <<Khachhang::demstt() <<" |";
+                cout<<setw(10)<<xe->hthituyenduong()<<"      |"<<setw(15)<<xe->loaixe()<<setw(7)<<"|";
                 cout<<endl;
-                STT++;
         }
         bool ktrathemtuyen = true;
         while(ktrathemtuyen) {
         string tuyenduongdat,loaixedat;
         cout<<"Nhap thong tin tuyen duong va loai xe can dat ve.\n";
-        cin.ignore();
-        cout<<"Nhap tuyen duong can dat ve: ";
+        cout<<"+Nhap tuyen duong can dat ve: ";
         getline(cin,tuyenduongdat);
-        cout<<"Nhap loai xe can dat ve: ";
+        cout<<"+Nhap loai xe can dat ve: ";
         getline(cin,loaixedat);
         for(Xe* xe : v1) {
                 if(xe->hthituyenduong() == tuyenduongdat && xe->loaixe() == loaixedat) {
@@ -489,11 +556,11 @@ void themthongtinKHdVe(vector<Xe*>& v1,vector<Khachhang>& v2) {
                                 cout<<".";
                                 cout.flush();
                                 this_thread::sleep_for(chrono::milliseconds(100));
-                                cout<<endl;
                         }
+                        cout<<endl;
                         ktrathemtuyen = false;
                         int soluongvetemp;
-                        cout<<"So luong ve can dat: ";
+                        cout<<"+So luong ve can dat: ";
                         cin>>soluongvetemp;
                         kh.setoluongve(soluongvetemp);
                         kh.capnhatthoigiandve();
@@ -507,7 +574,7 @@ void themthongtinKHdVe(vector<Xe*>& v1,vector<Khachhang>& v2) {
                                 long long tongtienlimo = 300000*soluongvetemp;
                                 kh.settongthanhtoan(tongtienlimo);        
                         }
-                        cout<<"Ban muon thanh toan ve khong?\n"
+                        cout<<"+Ban muon thanh toan ve khong?\n"
                                 <<"(1). Thanh toan ve.\n(2). Chua thanh toan.\n";
                         int luachonthanhtoan;
                         cout<<"Nhap lua chon: ";
@@ -522,6 +589,7 @@ void themthongtinKHdVe(vector<Xe*>& v1,vector<Khachhang>& v2) {
                                 return ;
                         }
                         v2.push_back(kh);
+                        cout<<"Dat ve thanh cong!";
                 }
         }
         if(ktrathemtuyen) {
@@ -550,9 +618,8 @@ void docfiledsachKH(vector<Khachhang>& v2) {
                 getline(sss,thoigiandatvef,'|');
                 getline(sss,trangthaif,'|');
                 int soluongvef1 = stoi(soluongvef);
-                long long sdtKHf1 = stoll(sdtKHf);
                 long long tongthanhtoanf1 = stoll(tongthanhtoanf);
-                Khachhang kh(hotenKHf,diaChiKHf,sdtKHf1,tuyenduongf,loaixeef,soluongvef1,tongthanhtoanf1,thoigiandatvef,trangthaif);
+                Khachhang kh(hotenKHf,diaChiKHf,sdtKHf,tuyenduongf,loaixeef,soluongvef1,tongthanhtoanf1,thoigiandatvef,trangthaif);
                 v2.push_back(kh);
         }
         if2.close();
@@ -576,21 +643,23 @@ void xoathongtinKHhVe(vector<Khachhang>& v2) {
         cout<<"Nhap ten khach hang can huy ve: ";
         getline(cin,tenKHhuyve);
         for(Khachhang kh : v2) {
-                if(kh.xuathotenKH() == tenKHhuyve) {
-                        if(kh.xuathotenKH() != tenKHhuyve) {
-                                v2m.push_back(kh);
-                        }
-                        else {
-                                ktrahuyve = true;
-                        }
+                if(kh.xuathotenKH() != tenKHhuyve) {
+                        v2m.push_back(kh);
+                }
+                else {
+                        ktrahuyve = true;
                 }
         }
         if(!ktrahuyve) {
                 cout<<"Khong tim thay thong tin khach hang "<<tenKHhuyve<<"\n";
+                system("pause");
+                system("cls");
         }
         else {
                 v2 = v2m;
-                cout<<"Huy ve thanh cong cho khach hang "<<tenKHhuyve<<"\n";
+                cout<<" =>Huy ve thanh cong cho khach hang "<<tenKHhuyve;
+                system("pause");
+                system("cls");
         }      
 }
 void xuatvechoKH(const vector<Khachhang>& v2) {
@@ -598,34 +667,39 @@ void xuatvechoKH(const vector<Khachhang>& v2) {
         cin.ignore();
         cout<<"Nhap ten khach hang xuat ve: ";
         getline(cin,tenKHxuatve);
+        bool ktravexe = false;
         for(Khachhang kh : v2) {
                 if(kh.xuathotenKH() == tenKHxuatve) {
                         kh.xuatthongtinKH();
+                        ktravexe = true;
                 }
-                else {
-                        cout<<"Khong tim thay thong tin khach hang can tim.\n";
-                }
+        }
+        if(!ktravexe) {
+                cout<<"Khong tim thay thong tin khach hang can tim.\n";
         }
 }
 void thongkedoanhthubxe(const vector<Xe*>& v1,const vector<Khachhang>& v2) {
         long long phivaoraa = 0,tongtiendatve = 0,tongtatca = 0;
+        int demchthanhtoan = 0;
         for(Xe* xe : v1) {
-                if(xe->loaixe() == "Xe khach") {
-                        Xekhach* xk;
-                        phivaoraa += xk->phiravaoxk();
-                }
-                if(xe->loaixe() == "Limousine")  {
-                        Limousine* limo;
-                        phivaoraa += limo->phiravaolimo();
-                }    
+                phivaoraa +=xe->getPhiRaVao();  
         }
-        cout<<"Tong tien thu tu phi ra vao: "<<phivaoraa<<"\n";
+        cout<<"+Tong tien thu tu phi ra vao: "<<phivaoraa<<"\n";
         for(Khachhang kh : v2) {
-                tongtiendatve += kh.tongthanhtoanve();      
+                if(kh.xuattrangthai() == "Da thanh toan") {
+                        tongtiendatve += kh.tongthanhtoanve();
+                }
+                else if (kh.xuattrangthai() == "Chua thanh toan") {
+                        demchthanhtoan++;              
+                }      
         }
-        cout<<"Tong so tien thu tu viec dat ve la: "<<tongtiendatve<<"\n";
+        cout<<"+Tong so tien thu tu viec dat ve la: "<<tongtiendatve<<"\n";
         tongtatca = phivaoraa + tongtiendatve;
-        cout<<"Doanh thu cua ben xe la: "<<tongtatca<<"\n";
+        cout<<"+Doanh thu cua ben xe la: "<<tongtatca<<"\n";
+        cout<<"+So khach hang chua thanh toan ve :"<<demchthanhtoan;
+        cout<<"\n";
+        system("pause");
+        system("cls");
 }
 void luulaitatca(vector<Xe*>& v1,vector<Khachhang>& v2) {
         luufiledsachxe(v1);
@@ -641,8 +715,8 @@ int main()
         bool ktramain = true;
         while(ktramain)
         {
-            cout << "+-------------------------------------------------------------------------------------+\n";
-            cout << "|" << setw(48) << "MENU QUAN LY BEN XE" << setw(39) << "|\n";
+            cout << "\n+-------------------------------------------------------------------------------------+\n";
+            cout << "|" << "                               " << "MENU QUAN LY BEN XE" << "                                   " << "|\n";
             cout << "+-------------------------------------------------------------------------------------+\n";
             cout << "|" << left << setw(42) << "   (1). Them phuong tien moi." 
                  << "|" << left << setw(42) << "   (6). Dat ve xe." << "|\n";
@@ -712,5 +786,9 @@ int main()
                                 cout<<"Lua chon khong hop le, vui long nhap lai.\n";
                 }
         }
+        for (Xe* xe : v1) {
+                delete xe;
+        }
+        v1.clear();
         return 0;
 }
