@@ -73,6 +73,7 @@ class Xekhach : public Xe {
 private:
         long long phidvravaoxkh;
 public:
+        long long giaVeXK = 200000;
         Xekhach() {}
         Xekhach(string bienso,string mauxe,int chongoi,int namsx,string tentaixe,string sdttx,string tuyenduong,long long phidvravaoxkh)
          : Xe(bienso,mauxe,chongoi,namsx,tentaixe,sdttx,tuyenduong) {
@@ -102,6 +103,7 @@ class Limousine : public Xe {
 private:
         long long phidvravaolimo;
 public:
+        long long giaVeLimo = 300000;
         Limousine() {}
         Limousine(string bienso,string mauxe,int chongoi,int namsx,string tentaixe,string sdttx,string tuyenduong,long long phidvravaolimo)
          : Xe(bienso,mauxe,chongoi,namsx,tentaixe,sdttx,tuyenduong) {
@@ -488,17 +490,17 @@ public:
                 getline(cin,sdtKH);              
         }
         void xuatthongtinKH() {
-                cout<<"\n+----------------------------IN VE XE-------------------------------------+\n";
-                cout<<"|"<<"   Ten khach hang: "<<hotenKH<<setw(47)<<"|"<<"\n";
-                cout<<"|"<<"   Dia chi khach hang: "<<diaChiKH<<setw(49)<<"|"<<"\n";
-                cout<<"|"<<"   So dien thoai khach hang: "<<sdtKH<<setw(35)<<"|"<<"\n";
-                cout<<"|"<<"   Tuyen duong: "<<tuyenduong<<setw(53)<<"|"<<"\n";
-                cout<<"|"<<"   Loai xe: "<<loaixee<<setw(54)<<"|"<<"\n";
-                cout<<"|"<<"   So luong ve dat: "<<soluongve<<setw(53)<<"|"<<"\n";
-                cout<<"|"<<"   Tong tien thanh toan: "<<tongthanhtoan<<"VND"<<setw(40)<<"|"<<"\n";
-                cout<<"|"<<"   Thoi gian dat ve: "<<thoigiandatve<<setw(34)<<"|"<<"\n";
-                cout<<"|"<<"   Trang thai thanh toan: "<<trangthai<<setw(34)<<"|"<<"\n";
-                cout<<"+-------------------------------------------------------------------------+\n";
+                cout<<"\n+---------------------IN VE XE------------------------------+\n";
+                cout<<"    +Ten khach hang: "<<hotenKH<<"\n";
+                cout<<"    +Dia chi khach hang: "<<diaChiKH<<"\n";
+                cout<<"    +So dien thoai khach hang: "<<sdtKH<<"\n";
+                cout<<"    +Tuyen duong: "<<tuyenduong<<"\n";
+                cout<<"    +Loai xe: "<<loaixee<<"\n";
+                cout<<"    +So luong ve dat: "<<soluongve<<"\n";
+                cout<<"    +Tong tien thanh toan: "<<tongthanhtoan<<"VND"<<"\n";
+                cout<<"    +Thoi gian dat ve: "<<thoigiandatve<<"\n";
+                cout<<"    +Trang thai thanh toan: "<<trangthai<<"\n";
+                cout<<"+-----------------------------------------------------------+\n";
                 cout<<" =>Xuat ve thanh cong.\n";
                 system("pause");
                 system("cls");
@@ -508,9 +510,9 @@ public:
         }
         void capnhatthoigiandve() {
         time_t now = time(nullptr);
-        char buffer[100];
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&now));
-        thoigiandatve = buffer;
+        char tgtemp[100];
+        strftime(tgtemp, sizeof(tgtemp), "%Y-%m-%d %H:%M:%S", localtime(&now));
+        thoigiandatve = tgtemp;
         }
         static int demstt() {
                 STT++;
@@ -549,6 +551,8 @@ void themthongtinKHdVe(vector<Xe*>& v1,vector<Khachhang>& v2) {
         getline(cin,tuyenduongdat);
         cout<<"+Nhap loai xe can dat ve: ";
         getline(cin,loaixedat);
+        Xekhach xh;
+        Limousine limo;
         for(Xe* xe : v1) {
                 if(xe->hthituyenduong() == tuyenduongdat && xe->loaixe() == loaixedat) {
                         cout<<"=>Dang xu ly yeu cau";
@@ -566,15 +570,17 @@ void themthongtinKHdVe(vector<Xe*>& v1,vector<Khachhang>& v2) {
                         kh.capnhatthoigiandve();
                         kh.setTuyenduong(tuyenduongdat);
                         kh.setLoaixee(loaixedat);
-                        if(loaixedat == "Xe Khach") {
-                                long long tongtienxekhach = 200000*soluongvetemp;
-                                kh.settongthanhtoan(tongtienxekhach);                                
+                        if(loaixedat == "Xe Khach" && xe->loaixe() == "Xe Khach") {
+                                long long tongtienxekhach = xh.giaVeXK*soluongvetemp;
+                                kh.settongthanhtoan(tongtienxekhach); 
+                                cout<<"So tien can phai thanh toan la:"<< tongtienxekhach;                              
                         }
-                        else if(loaixedat == "Limousine") {
-                                long long tongtienlimo = 300000*soluongvetemp;
-                                kh.settongthanhtoan(tongtienlimo);        
+                        else if(loaixedat == "Limousine" && xe->loaixe() == "Limousine") {
+                                long long tongtienlimo = limo.giaVeLimo*soluongvetemp;
+                                kh.settongthanhtoan(tongtienlimo);
+                                cout<<"So tien can phai thanh toan la:"<< tongtienlimo;        
                         }
-                        cout<<"+Ban muon thanh toan ve khong?\n"
+                        cout<<"\n+Ban muon thanh toan ve khong?\n"
                                 <<"(1). Thanh toan ve.\n(2). Chua thanh toan.\n";
                         int luachonthanhtoan;
                         cout<<"Nhap lua chon: ";
@@ -593,7 +599,7 @@ void themthongtinKHdVe(vector<Xe*>& v1,vector<Khachhang>& v2) {
                 }
         }
         if(ktrathemtuyen) {
-                cout<<"Thong tin dat ve sai vui long kiem tra lai.\n";
+                cout<<"  =>Thong tin dat ve sai vui long kiem tra lai.\n";
         }
         }
 }
@@ -715,21 +721,17 @@ int main()
         bool ktramain = true;
         while(ktramain)
         {
-            cout << "\n+-------------------------------------------------------------------------------------+\n";
-            cout << "|" << "                               " << "MENU QUAN LY BEN XE" << "                                   " << "|\n";
-            cout << "+-------------------------------------------------------------------------------------+\n";
-            cout << "|" << left << setw(42) << "   (1). Them phuong tien moi." 
-                 << "|" << left << setw(42) << "   (6). Dat ve xe." << "|\n";
-            cout << "|" << left << setw(42) << "   (2). Xoa thong tin phuong tien." 
-                 << "|" << left << setw(42) << "   (7). Huy ve xe." << "|\n";
-            cout << "|" << left << setw(42) << "   (3). Tim kiem thong tin phuong tien." 
-                 << "|" << left << setw(42) << "   (8). Xuat ve theo ten khach hang." << "|\n";
-            cout << "|" << left << setw(42) << "   (4). Chinh sua thong tin phuong tien." 
-                 << "|" << left << setw(42) << "   (9). Thong ke doanh thu cua ben xe." << "|\n";
-            cout << "|" << left << setw(42) << "   (5). Xuat thong tin phuong tien." 
-                 << "|" << left << setw(42) << "  (10). Luu thong tin vao file." << "|\n";
-            cout << "|" << setw(52) << right << "(11). Thoat chuong trinh." <<setw(35)<< "|\n";
-            cout << "+-------------------------------------------------------------------------------------+\n";
+                cout << "\n";
+                cout << "                +-----------------------------------------------------------------------------------+\n";
+                cout << "                |                                MENU QUAN LY BEN XE                                |\n";
+                cout << "                +-----------------------------------------------------------------------------------+\n";
+                cout << "                |   (1). Them phuong tien moi.              |   (6). Dat ve xe.                     |\n";
+                cout << "                |   (2). Xoa thong tin phuong tien.         |   (7). Huy ve xe.                     |\n";
+                cout << "                |   (3). Tim kiem thong tin phuong tien.    |   (8). Xuat ve theo ten khach hang.   |\n";
+                cout << "                |   (4). Chinh sua thong tin phuong tien.   |   (9). Thong ke doanh thu ben xe.     |\n";
+                cout << "                |   (5). Xuat thong tin phuong tien.        |  (10). Luu thong tin vao file.        |\n";
+                cout << "                |                                 (11). Thoat chuong trinh.                         |\n";
+                cout << "                +-----------------------------------------------------------------------------------+\n";
                 cout<<"Nhap lua chon: ";
                 cin>>luachonmain;
                 switch(luachonmain) {
